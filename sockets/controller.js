@@ -3,11 +3,14 @@ const TicketControl = require("../models/ticket-control");
 const ticketControl = new TicketControl();
 
 const socketController = (socket) => {
-	socket.on("send-message", (payload, callback) => {
-		const id = 123456789;
-		callback(id);
+	socket.emit("last-ticket", ticketControl.last);
 
-		socket.broadcast.emit("send-message", payload);
+	socket.on("next-ticket", (payload, callback) => {
+		const next = ticketControl.next();
+
+		callback(next);
+
+		// TODO: Notify that there is a new ticket pending to assign
 	});
 };
 
