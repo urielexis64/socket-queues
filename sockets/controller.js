@@ -12,6 +12,20 @@ const socketController = (socket) => {
 
 		// TODO: Notify that there is a new ticket pending to assign
 	});
+
+	socket.on("attend-ticket", ({desktop}, callback) => {
+		if (!desktop) {
+			return callback({ok: false, msg: "Desktop is required"});
+		}
+
+		const ticket = ticketControl.attendTicket(desktop);
+
+		if (!ticket) {
+			callback({ok: false, msg: "There is no pending tickets"});
+		} else {
+			callback({ok: true, ticket});
+		}
+	});
 };
 
 module.exports = {
