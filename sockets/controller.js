@@ -4,13 +4,15 @@ const ticketControl = new TicketControl();
 
 const socketController = (socket) => {
 	socket.emit("last-ticket", ticketControl.last);
+	socket.emit("current-status", ticketControl.last4);
+	socket.emit("pending-tickets", ticketControl.tickets.length);
 
 	socket.on("next-ticket", (payload, callback) => {
 		const next = ticketControl.next();
 
 		callback(next);
 
-		// TODO: Notify that there is a new ticket pending to assign
+		socket.broadcast.emit("pending-tickets", ticketControl.tickets.length);
 	});
 
 	socket.on("attend-ticket", ({desktop}, callback) => {
@@ -19,6 +21,10 @@ const socketController = (socket) => {
 		}
 
 		const ticket = ticketControl.attendTicket(desktop);
+
+		socket.broadcast.emit("current-status", ticketControl.last4);
+		socket.emit("pending-tickets", ticketControl.tickets.length);
+		socket.broadcast.emit("pending-tickets", ticketControl.tickets.length);
 
 		if (!ticket) {
 			callback({ok: false, msg: "There is no pending tickets"});
