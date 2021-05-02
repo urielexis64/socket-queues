@@ -1,5 +1,4 @@
 // HTML references
-
 const lblNewTicket = document.querySelector("#lblNewTicket");
 const btnCreate = document.querySelector("button");
 
